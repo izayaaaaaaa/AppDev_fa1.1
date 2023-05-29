@@ -1,5 +1,18 @@
+// Requirements:
+// 1. Allow players to keep guessing until they guess the number —— DONE (check validateInput method)
+// 2. Keep a count of the number of guesses. —— DONE (check validateInput method)
+// 3. Choose two colors for your game: —— DONE (check validateInput method)
+//      one should be used to indicate that the value the players guessed is higher than the target; 
+//      the other is used to indicate that the value the players guessed is lower than the target.
+// 4. With each new guess, show the guess count and change the form color based on whether the guess is higher than the target or lower. —— DONE (check validateInput method)
+// 5. When the player hits the target, display a message indicating the number of guesses it took. —— DONE (check validateInput method)
+// 6. Set the time to guess the number. You should define this in your program. If the the player took more time than what is allowed, the player looses the game. —— DONE (check gameTimer method)
+// 7. Provide a reset button to enable the user to re-start the game without re-running your application. —— DONE (check newGame button)
+// 8. Use the  Random class of Java in generating the target number as follows. —— DONE (check startNewGame method)
+
 import java.util.Random;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,14 +44,13 @@ public class game_interface {
     JPanel mainMenuPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyJPanel, inputFieldPanel;
 
     JButton startButton, rulesButton, mainMenuButton, newGameButton;
-    JButton fillerHorizontalLine;
 
     JLabel centerTitle, attemptsLabel, timerLabel;
     JTextField inputField;  
     
     public game_interface() {
         frame = new JFrame("Guess the Number");
-
+        
         createMainMenu();
         createGameInterface();
         
@@ -52,8 +64,15 @@ public class game_interface {
     void createMainMenu() {
         // MAIN MENU COMPONENTS
         mainMenuPanel = new JPanel(new GridBagLayout());
+        mainMenuPanel.setBackground(Color.decode("#101014"));
 
         startButton = new JButton("Start Game");
+        startButton.setFocusPainted(false);
+        startButton.setForeground(Color.decode("#C56054"));
+        startButton.setFont(startButton.getFont().deriveFont(25f));
+        customizeButton(startButton);
+        startButton.setBorderPainted(true);
+        startButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#40DAA6")));
         startButton.setPreferredSize(new Dimension(150, 50));
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -61,20 +80,22 @@ public class game_interface {
                 startNewGame();
             }
         });
-        fillerHorizontalLine = new JButton("Horizontal Line");
-        fillerHorizontalLine.setPreferredSize(new Dimension(150, 50));
         rulesButton = new JButton("Rules");
+        rulesButton.setForeground(Color.decode("#399FC3"));
+        rulesButton.setFont(startButton.getFont().deriveFont(25f));
+        customizeButton(rulesButton);
+        rulesButton.setBorderPainted(true);
+        rulesButton.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.decode("#40DAA6")));
         rulesButton.setPreferredSize(new Dimension(150, 50));
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = GridBagConstraints.RELATIVE;
         c.anchor = GridBagConstraints.CENTER;
-        c.insets.top = 10;
-        c.insets.bottom = 10;
+        c.insets.top = 0;
+        c.insets.bottom = 0;
 
         mainMenuPanel.add(startButton, c);
-        mainMenuPanel.add(fillerHorizontalLine, c);
         mainMenuPanel.add(rulesButton, c);
     }
 
@@ -82,11 +103,13 @@ public class game_interface {
         // GAME INTERFACE COMPONENTS
         gamePanel = new JPanel(new BorderLayout());
         gamePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+        // gamePanel.setBackground(Color.decode("#101014"));
 
         gameNorthPanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         mainMenuButton = new JButton("Main Menu");
+        customizeButton(mainMenuButton);
         c.gridx = 0;
         c.gridy = 0;
         mainMenuButton.addActionListener(new ActionListener() {
@@ -100,6 +123,7 @@ public class game_interface {
         gameNorthPanel.add(mainMenuButton, c);
 
         newGameButton = new JButton("New Game");
+        customizeButton(newGameButton);
         c.gridx = 1;
         c.gridy = 0;
         newGameButton.addActionListener(new ActionListener() {
@@ -217,20 +241,34 @@ public class game_interface {
 
                 if (inputNumber == randomNumber) {
                     centerTitle.setText("you guessed it right!");
+                    centerTitle.setForeground(Color.GREEN);
+                    attemptsLabel.setForeground(Color.GREEN);
+                    inputField.setEditable(false);
                     timer.stop();
                 } else if (inputNumber < randomNumber) {
                     centerTitle.setText(input + " is too low!");
-                } else {
+                    centerTitle.setForeground(Color.BLUE);
+                    attemptsLabel.setForeground(Color.BLUE);
+                } else { // input is higher than the target 
                     centerTitle.setText(input + " is too high!");
+                    centerTitle.setForeground(Color.RED);
+                    attemptsLabel.setForeground(Color.RED);
                 }
             }
 
-            attemptsLabel.setText("Attempts: " + attemptsCount.toString());
+            attemptsLabel.setText("It took you " + attemptsCount.toString() + " attempts!");
             updateGUI();
         } catch (NumberFormatException e) {
             centerTitle.setText(input + " is not a number!");
             updateGUI();
         }
+    }
+
+    void customizeButton (JButton button) {
+        // removes borders, background, and opaque; just the text is visible
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
     }
 
     void updateGUI(){
