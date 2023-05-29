@@ -1,5 +1,4 @@
 import java.util.Random;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -7,11 +6,13 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 public class game_interface {
@@ -21,17 +22,18 @@ public class game_interface {
 
     Random rand;
     Integer randomNumber;
+    
     Integer attemptsCount = 0;
+    
     int timeRemaining;
-
     Timer timer;
 
-    JPanel mainMenuPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyJPanel;
+    JPanel mainMenuPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyJPanel, inputFieldPanel;
 
     JButton startButton, rulesButton, mainMenuButton, newGameButton;
-    JButton fillerTimer, fillerHorizontalLine;
+    JButton fillerHorizontalLine;
 
-    JLabel centerTitle, attempts;
+    JLabel centerTitle, attemptsLabel, timerLabel;
     JTextField inputField;  
     
     public game_interface() {
@@ -41,10 +43,9 @@ public class game_interface {
         createGameInterface();
         
         frame.add(mainMenuPanel);
-        // pack();
         frame.setSize(1024, 720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(true);
+        frame.setResizable(false);
         frame.setVisible(true);
     } // constructor
 
@@ -80,6 +81,7 @@ public class game_interface {
     void createGameInterface() {
         // GAME INTERFACE COMPONENTS
         gamePanel = new JPanel(new BorderLayout());
+        gamePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
         gameNorthPanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -91,7 +93,7 @@ public class game_interface {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.remove(gamePanel);
-                frame.add(mainMenuPanel, BorderLayout.CENTER);
+                frame.add(mainMenuPanel);
                 updateGUI();
             }
         });
@@ -115,18 +117,21 @@ public class game_interface {
         c.gridy = 0;
         gameNorthPanel.add(emptyJPanel, c);
 
-        // add timer later
-        fillerTimer = new JButton("Timer");
+        timerLabel = new JLabel("30");
         c.weightx = 0;
         c.gridx = 3;
         c.gridy = 0;
         c.anchor = GridBagConstraints.EAST;
         
-        gameNorthPanel.add(fillerTimer, c); // add timer later
+        gameNorthPanel.add(timerLabel, c); // add timer later
 
         gameCenterPanel = new JPanel(new BorderLayout());
+        gameCenterPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
         centerTitle = new JLabel("what number am i?");
-        inputField = new JTextField();
+
+        inputFieldPanel = new JPanel();
+        inputField = new JTextField("_ _");
+        inputField.setColumns(2);
         inputField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -134,11 +139,13 @@ public class game_interface {
                 validateInput(input);
             }
         });
-        attempts = new JLabel("Attempts: " + attemptsCount.toString());
+        inputFieldPanel.add(inputField);
+        
+        attemptsLabel = new JLabel("Attempts: " + attemptsCount.toString());
 
         gameCenterPanel.add(centerTitle, BorderLayout.NORTH);
-        gameCenterPanel.add(inputField, BorderLayout.CENTER);
-        gameCenterPanel.add(attempts, BorderLayout.SOUTH);
+        gameCenterPanel.add(inputFieldPanel, BorderLayout.CENTER);
+        gameCenterPanel.add(attemptsLabel, BorderLayout.SOUTH);
 
         gamePanel.add(gameNorthPanel, BorderLayout.NORTH);
         gamePanel.add(gameCenterPanel, BorderLayout.CENTER);
@@ -149,17 +156,50 @@ public class game_interface {
         rand = new Random();
         randomNumber = rand.nextInt(100);
         attemptsCount = 0;
-        
-        // // identify if the current panel is the main menu or the game panel
-        // if (frame.getComponent(0) == mainMenuPanel) {
-        //     frame.remove(mainMenuPanel);
-        // } else {
-        //     frame.remove(gamePanel);
-        // } 
+        timeRemaining = 30;
 
-        frame.remove(mainMenuPanel);
+        timerLabel.setText(Integer.toString(timeRemaining));
+        centerTitle.setText("what number am i?");
+        inputField.setEditable(true);
+        inputField.setText("_ _");
+        attemptsLabel.setText("Attempts: " + attemptsCount.toString());
+
+        // if timer is running, stop it
+        if (timer != null) {
+            timer.stop();
+        }
+        
+        // identify if the current panel is the main menu or the game panel
+        if (frame.getContentPane().getComponent(0).equals(mainMenuPanel)) {
+            frame.getContentPane().remove(mainMenuPanel);
+        } else {
+            frame.getContentPane().remove(gamePanel);
+        }
+
+        gameTimer();
+
         frame.add(gamePanel);
         updateGUI();
+    }
+
+    void gameTimer() {
+        ActionListener timerAction = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    timerLabel.setText(Integer.toString(timeRemaining));
+                });
+                timeRemaining--;
+
+                if (timeRemaining < 0) {
+                    timer.stop();
+                    centerTitle.setText("Time's up!");
+                    inputField.setEditable(false);
+                }
+            }
+        };
+        timer = new Timer(1000, timerAction);
+        timer.start();
     }
 
     void validateInput(String input) {
@@ -177,6 +217,7 @@ public class game_interface {
 
                 if (inputNumber == randomNumber) {
                     centerTitle.setText("you guessed it right!");
+                    timer.stop();
                 } else if (inputNumber < randomNumber) {
                     centerTitle.setText(input + " is too low!");
                 } else {
@@ -184,7 +225,7 @@ public class game_interface {
                 }
             }
 
-            attempts.setText("Attempts: " + attemptsCount.toString());
+            attemptsLabel.setText("Attempts: " + attemptsCount.toString());
             updateGUI();
         } catch (NumberFormatException e) {
             centerTitle.setText(input + " is not a number!");
