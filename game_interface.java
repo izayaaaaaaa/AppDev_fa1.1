@@ -18,8 +18,6 @@ public class game_interface extends JFrame {
     Random rand = new Random();
     Integer randomNumber = rand.nextInt(100);
     
-    // main menu and the game itself are two panels that are swapped
-
     JPanel mainMenuPanel, gamePanel, gameNorthPanel, gameCenterPanel;
 
     JButton startButton, rulesButton;
@@ -75,9 +73,7 @@ public class game_interface extends JFrame {
         gamePanel.add(gameCenterPanel, BorderLayout.CENTER);
 
         // setup the frame
-
         add(mainMenuPanel, BorderLayout.CENTER);
-
         // pack();
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,9 +84,7 @@ public class game_interface extends JFrame {
     private void showGameInterface() {
         remove(mainMenuPanel);
         add(gamePanel, BorderLayout.CENTER);
-
-        revalidate();
-        repaint();
+        updateGUI();
     }
 
     private void validateInput(String input) {
@@ -112,14 +106,16 @@ public class game_interface extends JFrame {
                     centerTitle.setText(input + " is too high!");
                 }
             }
-            revalidate();
-            repaint();
+            updateGUI();
         } catch (NumberFormatException e) {
             centerTitle.setText(input + " is not a number!");
-
-            revalidate();
-            repaint();
+            updateGUI();
         }
+    }
+
+    private void updateGUI(){
+        revalidate();
+        repaint();
     }
 
     // ensure only one instance of the game_interface is created
