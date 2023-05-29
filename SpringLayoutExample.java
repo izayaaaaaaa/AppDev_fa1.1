@@ -1,48 +1,32 @@
-// USED FOR THE NORTH PANEL
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SpringLayout;
 
-import javax.swing.*;
-// import java.awt.*;
-
-public class SpringLayoutExample extends JFrame {
-    public SpringLayoutExample() {
-        setTitle("SpringLayout Example");
-
-        JPanel contentPane = new JPanel();
-        SpringLayout layout = new SpringLayout();
-        contentPane.setLayout(layout);
-
-        JLabel nameLabel = new JLabel("Name:");
-        JTextField nameField = new JTextField(20);
-        JButton saveButton = new JButton("Save");
-
-        contentPane.add(nameLabel);
-        contentPane.add(nameField);
-        contentPane.add(saveButton);
-
-        SpringLayout.Constraints constraints;
-
-        constraints = layout.getConstraints(nameLabel);
-        constraints.setX(Spring.constant(10));
-        constraints.setY(Spring.constant(10));
-
-        constraints = layout.getConstraints(nameField);
-        constraints.setX(Spring.sum(Spring.constant(10), layout.getConstraint(SpringLayout.EAST, nameLabel)));
-        constraints.setY(Spring.constant(10));
-
-        constraints = layout.getConstraints(saveButton);
-        constraints.setX(Spring.constant(10));
-        constraints.setY(Spring.sum(Spring.constant(50), layout.getConstraint(SpringLayout.SOUTH, nameField)));
-
-        setContentPane(contentPane);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        pack();
-    }
-
+public class SpringLayoutExample {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            SpringLayoutExample example = new SpringLayoutExample();
-            example.setVisible(true);
-        });
+        JFrame frame = new JFrame("SpringLayout Example");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel panel = new JPanel();
+        SpringLayout layout = new SpringLayout();
+        panel.setLayout(layout);
+        
+        // Create components
+        JButton button1 = new JButton("Button 1");
+        JButton button2 = new JButton("Button 2");
+        
+        // Define the layout constraints
+        layout.putConstraint(SpringLayout.WEST, button1, 10, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, button1, 10, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.WEST, button2, -100, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.NORTH, button2, 10, SpringLayout.NORTH, panel);
+        
+        panel.add(button1);
+        panel.add(button2);
+        
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 }
