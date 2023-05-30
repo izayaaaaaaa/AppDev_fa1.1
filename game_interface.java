@@ -235,6 +235,9 @@ public class game_interface {
         mainMenuButton.setForeground(bluegreen);
         mainMenuButton.setFont(customFont.deriveFont(20f));
         customizeButton(mainMenuButton);
+        mainMenuButton.setBorderPainted(true);
+        mainMenuButton.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, bluegreen));
+        mainMenuButton.setPreferredSize(new Dimension(90, 20));
         createGameInterfaceConstraints.gridx = 0;
         createGameInterfaceConstraints.gridy = 0;
         mainMenuButton.addActionListener(new ActionListener() {
@@ -251,6 +254,9 @@ public class game_interface {
         newGameButton.setForeground(bluegreen);
         newGameButton.setFont(customFont.deriveFont(20f));
         customizeButton(newGameButton);
+        newGameButton.setBorderPainted(true);
+        newGameButton.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, bluegreen));
+        newGameButton.setPreferredSize(new Dimension(90, 20));
         createGameInterfaceConstraints.gridx = 1;
         createGameInterfaceConstraints.gridy = 0;
         newGameButton.addActionListener(new ActionListener() {
