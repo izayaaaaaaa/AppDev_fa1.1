@@ -49,11 +49,13 @@ public class game_interface {
     int timeRemaining;
     Timer timer;
 
-    JPanel mainMenuPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyJPanel;
+    JPanel mainMenuPanel, rulesPanel, ruleItemsPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyJPanel;
+
+    GridBagConstraints mainMenuConstraints, createRulesConstraints, createGameInterfaceConstraints;
 
     JButton startButton, rulesButton, mainMenuButton, newGameButton;
 
-    JLabel centerTitle, attemptsLabel, timerLabel;
+    JLabel centerTitle, attemptsLabel, timerLabel, rule1, rule2, rule3, rule4, author;
     CustomTextField inputField;  
 
     // pallette 
@@ -70,6 +72,7 @@ public class game_interface {
         
         createMainMenu();
         createGameInterface();
+        createRules();
         
         frame.add(mainMenuPanel);
         frame.setSize(1024, 720);
@@ -79,7 +82,6 @@ public class game_interface {
     } // constructor
 
     void createMainMenu() {
-        // MAIN MENU COMPONENTS
         mainMenuPanel = new JPanel(new GridBagLayout());
         mainMenuPanel.setBackground(Color.decode("#101014"));
 
@@ -104,34 +106,127 @@ public class game_interface {
         rulesButton.setBorderPainted(true);
         rulesButton.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, bluegreen));
         rulesButton.setPreferredSize(new Dimension(150, 50));
+        rulesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(mainMenuPanel);
+                frame.add(rulesPanel);
+                updateGUI();
+            }
+        });
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = GridBagConstraints.RELATIVE;
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets.top = 0;
-        c.insets.bottom = 0;
+        mainMenuConstraints = new GridBagConstraints();
+        mainMenuConstraints.gridx = 0;
+        mainMenuConstraints.gridy = GridBagConstraints.RELATIVE;
+        mainMenuConstraints.anchor = GridBagConstraints.CENTER;
+        mainMenuConstraints.insets.top = 0;
+        mainMenuConstraints.insets.bottom = 0;
 
-        mainMenuPanel.add(startButton, c);
-        mainMenuPanel.add(rulesButton, c);
+        mainMenuPanel.add(startButton, mainMenuConstraints);
+        mainMenuPanel.add(rulesButton, mainMenuConstraints);
+    }
+
+    void createRules() {
+        rulesPanel = new JPanel(new BorderLayout());
+        rulesPanel.setBackground(background);
+        rulesPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+        mainMenuButton = new JButton("Main Menu");
+        mainMenuButton.setForeground(bluegreen);
+        
+        mainMenuButton.setFont(mainMenuButton.getFont().deriveFont(16f));
+        customizeButton(mainMenuButton);
+        mainMenuButton.setHorizontalAlignment(JButton.LEFT);
+        mainMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(rulesPanel);
+                frame.add(mainMenuPanel);
+                updateGUI();
+            }
+        });
+        rulesPanel.add(mainMenuButton, BorderLayout.NORTH);
+
+        ruleItemsPanel = new JPanel(new GridBagLayout());
+        ruleItemsPanel.setBackground(background);
+        createRulesConstraints = new GridBagConstraints();
+
+        JLabel rulesTitle = new JLabel("Rules");
+        rulesTitle.setForeground(bluegreen);
+        rulesTitle.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, bluegreen));
+        rulesTitle.setFont(rulesTitle.getFont().deriveFont(40f));
+        createRulesConstraints.gridx = 0;
+        createRulesConstraints.gridy = 0;
+        createRulesConstraints.anchor = GridBagConstraints.WEST;
+        createRulesConstraints.insets = new Insets(0, 0, 50, 0);
+        ruleItemsPanel.add(rulesTitle, createRulesConstraints);
+
+        createRule(
+            rule1, 
+            "<html><body>" 
+            + "<span style='color: #AA3290'>>&nbsp;&nbsp;</span> You have <u>30 seconds</u> to <span style='color: #AA3290'>guess</span> the randomly generated number"
+            + "</body></html>",
+            1
+        );
+        createRule(
+            rule2, 
+            "<html><body>" 
+            + "<span style='color: #C56054'>>&nbsp;&nbsp;</span> When the input number is <u>higher</u> than the target, the components will turn <span style='color: #C56054'>red</span>"
+            + "</body></html>",
+            2
+        );
+        createRule(
+            rule3, 
+            "<html><body>" 
+            + "<span style='color: #399FC3'>>&nbsp;&nbsp;</span> When the input number is <u>lower</u> than the target, the components will turn <span style='color: #399FC3'>blue</span>"
+            + "</body></html>",
+            3
+        );
+        createRule(
+            rule4, 
+            "<html><body>" 
+            + "<span style='color: #67B94F'>>&nbsp;&nbsp;</span> The components will turn <span style='color: #67B94F'>green</span> if the input is <u>equal</u> to the random number"
+            + "</body></html>",
+            4
+        );
+
+        rulesPanel.add(ruleItemsPanel, BorderLayout.CENTER);
+
+        author = new JLabel("Created by Francyn Macadangdang for IT191");
+        author.setForeground(Color.GRAY);
+        author.setFont(author.getFont().deriveFont(12f));
+        author.setHorizontalAlignment(JLabel.CENTER);
+        rulesPanel.add(author, BorderLayout.SOUTH);
+    }
+
+    void createRule(JLabel rule, String text, int y) {
+        rule = new JLabel();
+        rule.setForeground(Color.WHITE);
+        rule.setFont(rule.getFont().deriveFont(22f));
+        rule.setText(text);
+        createRulesConstraints.gridx = 0;
+        createRulesConstraints.gridy = y;
+        createRulesConstraints.gridwidth = 3;
+        createRulesConstraints.anchor = GridBagConstraints.WEST;
+        createRulesConstraints.insets = new Insets(0, 0, 30, 0);
+        ruleItemsPanel.add(rule, createRulesConstraints);
     }
 
     void createGameInterface() {
-        // GAME INTERFACE COMPONENTS
         gamePanel = new JPanel(new BorderLayout());
         gamePanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 0, 50));
         gamePanel.setBackground(background);
 
         gameNorthPanel = new JPanel(new GridBagLayout());
         gameNorthPanel.setBackground(background);
-        GridBagConstraints c = new GridBagConstraints();
+        createGameInterfaceConstraints = new GridBagConstraints();
 
         mainMenuButton = new JButton("Main Menu");
         mainMenuButton.setForeground(bluegreen);
         mainMenuButton.setFont(mainMenuButton.getFont().deriveFont(16f));
         customizeButton(mainMenuButton);
-        c.gridx = 0;
-        c.gridy = 0;
+        createGameInterfaceConstraints.gridx = 0;
+        createGameInterfaceConstraints.gridy = 0;
         mainMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -140,41 +235,41 @@ public class game_interface {
                 updateGUI();
             }
         });
-        gameNorthPanel.add(mainMenuButton, c);
+        gameNorthPanel.add(mainMenuButton, createGameInterfaceConstraints);
 
         newGameButton = new JButton("New Game");
         newGameButton.setForeground(bluegreen);
         newGameButton.setFont(newGameButton.getFont().deriveFont(16f));
         customizeButton(newGameButton);
-        c.gridx = 1;
-        c.gridy = 0;
+        createGameInterfaceConstraints.gridx = 1;
+        createGameInterfaceConstraints.gridy = 0;
         newGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startNewGame();
             }
         });
-        gameNorthPanel.add(newGameButton, c);
+        gameNorthPanel.add(newGameButton, createGameInterfaceConstraints);
 
 
         emptyJPanel = new JPanel();
         emptyJPanel.setBackground(background);
-        c.weightx = 0.5;
-        c.gridx = 2;
-        c.gridy = 0;
-        gameNorthPanel.add(emptyJPanel, c);
+        createGameInterfaceConstraints.weightx = 0.5;
+        createGameInterfaceConstraints.gridx = 2;
+        createGameInterfaceConstraints.gridy = 0;
+        gameNorthPanel.add(emptyJPanel, createGameInterfaceConstraints);
 
         timerLabel = new JLabel("30");
-        timerLabel.setForeground(green);
+        timerLabel.setForeground(bluegreen);
         timerLabel.setFont(timerLabel.getFont().deriveFont(16f));
-        c.weightx = 0;
-        c.gridx = 3;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.EAST;
+        createGameInterfaceConstraints.weightx = 0;
+        createGameInterfaceConstraints.gridx = 3;
+        createGameInterfaceConstraints.gridy = 0;
+        createGameInterfaceConstraints.anchor = GridBagConstraints.EAST;
         
-        gameNorthPanel.add(timerLabel, c); // add timer later        
+        gameNorthPanel.add(timerLabel, createGameInterfaceConstraints); // add timer later        
         
-        c.anchor = GridBagConstraints.CENTER;
+        createGameInterfaceConstraints.anchor = GridBagConstraints.CENTER;
 
         gameCenterPanel = new JPanel(new GridBagLayout());
         gameCenterPanel.setBackground(background);
@@ -183,10 +278,10 @@ public class game_interface {
         centerTitle.setForeground(Color.WHITE);
         centerTitle.setFont(centerTitle.getFont().deriveFont(48f));
         centerTitle.setHorizontalAlignment(JLabel.CENTER);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.insets.bottom = 75;
-        gameCenterPanel.add(centerTitle, c);
+        createGameInterfaceConstraints.gridx = 0;
+        createGameInterfaceConstraints.gridy = 0;
+        createGameInterfaceConstraints.insets.bottom = 75;
+        gameCenterPanel.add(centerTitle, createGameInterfaceConstraints);
         
         inputField = new CustomTextField(5, 50, 100);
         inputField.setHorizontalAlignment(CustomTextField.CENTER);
@@ -200,19 +295,19 @@ public class game_interface {
                 validateInput(input);
             }
         });
-        c.gridx = 0;
-        c.gridy = 1;
-        c.insets.top = 0;
-        c.insets.bottom = 100;
-        gameCenterPanel.add(inputField, c);
+        createGameInterfaceConstraints.gridx = 0;
+        createGameInterfaceConstraints.gridy = 1;
+        createGameInterfaceConstraints.insets.top = 0;
+        createGameInterfaceConstraints.insets.bottom = 100;
+        gameCenterPanel.add(inputField, createGameInterfaceConstraints);
         
         attemptsLabel = new JLabel("Attempts: " + attemptsCount.toString());
         attemptsLabel.setForeground(Color.WHITE);
         attemptsLabel.setFont(centerTitle.getFont().deriveFont(32f));
         attemptsLabel.setHorizontalAlignment(JLabel.CENTER);
-        c.gridx = 0;
-        c.gridy = 2;
-        gameCenterPanel.add(attemptsLabel, c);
+        createGameInterfaceConstraints.gridx = 0;
+        createGameInterfaceConstraints.gridy = 2;
+        gameCenterPanel.add(attemptsLabel, createGameInterfaceConstraints);
 
         gamePanel.add(gameNorthPanel, BorderLayout.NORTH);
         gamePanel.add(gameCenterPanel, BorderLayout.CENTER);
@@ -224,6 +319,7 @@ public class game_interface {
         randomNumber = rand.nextInt(100);
         attemptsCount = 0;
         timeRemaining = 30;
+        inputField.setText(null);
 
         timerLabel.setText(Integer.toString(timeRemaining));
         centerTitle.setText("what number am i?");
@@ -323,6 +419,10 @@ public class game_interface {
     void updateGUI(){
         frame.revalidate();
         frame.repaint();
+    }
+
+    void createMainMenuBtn(GridBagConstraints c) {
+        
     }
 
     // ensure only one instance of the game_interface is created
