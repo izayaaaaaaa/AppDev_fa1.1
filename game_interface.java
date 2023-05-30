@@ -14,13 +14,18 @@ import java.util.Random;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -58,18 +63,22 @@ public class game_interface {
     JLabel centerTitle, attemptsLabel, timerLabel, rule1, rule2, rule3, rule4, author;
     CustomTextField inputField;  
 
+    Font customFont, customThinnerFont;
+
     // pallette 
     Color red = Color.decode("#C56054");
     Color blue = Color.decode("#399FC3");
     Color green = Color.decode("#67B94F");
-    Color bluegreen = Color.decode("#40DAA6");
+    Color bluegreen = Color.decode("#3AB98F");
     Color background = Color.decode("#101014");
-
     Color inputFieldBG = Color.GRAY;
+
 
     public game_interface() {
         frame = new JFrame("Guess the Number");
         
+        customFont = loadCustomFont("HandjetFlowerDouble-Medium.ttf");
+
         createMainMenu();
         createGameInterface();
         createRules();
@@ -88,11 +97,12 @@ public class game_interface {
         startButton = new JButton("Start Game");
         startButton.setFocusPainted(false);
         startButton.setForeground(red);
-        startButton.setFont(startButton.getFont().deriveFont(25f));
+        
+        startButton.setFont(customFont.deriveFont(40f));
         customizeButton(startButton);
         startButton.setBorderPainted(true);
         startButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, bluegreen));
-        startButton.setPreferredSize(new Dimension(150, 50));
+        startButton.setPreferredSize(new Dimension(150, 100));
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,11 +111,11 @@ public class game_interface {
         });
         rulesButton = new JButton("Rules");
         rulesButton.setForeground(blue);
-        rulesButton.setFont(rulesButton.getFont().deriveFont(25f));
+        rulesButton.setFont(customFont.deriveFont(40f));
         customizeButton(rulesButton);
         rulesButton.setBorderPainted(true);
         rulesButton.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, bluegreen));
-        rulesButton.setPreferredSize(new Dimension(150, 50));
+        rulesButton.setPreferredSize(new Dimension(150, 100));
         rulesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -134,7 +144,7 @@ public class game_interface {
         mainMenuButton = new JButton("Main Menu");
         mainMenuButton.setForeground(bluegreen);
         
-        mainMenuButton.setFont(mainMenuButton.getFont().deriveFont(16f));
+        mainMenuButton.setFont(customFont.deriveFont(20f));
         customizeButton(mainMenuButton);
         mainMenuButton.setHorizontalAlignment(JButton.LEFT);
         mainMenuButton.addActionListener(new ActionListener() {
@@ -154,7 +164,7 @@ public class game_interface {
         JLabel rulesTitle = new JLabel("Rules");
         rulesTitle.setForeground(bluegreen);
         rulesTitle.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, bluegreen));
-        rulesTitle.setFont(rulesTitle.getFont().deriveFont(40f));
+        rulesTitle.setFont(customFont.deriveFont(46f));
         createRulesConstraints.gridx = 0;
         createRulesConstraints.gridy = 0;
         createRulesConstraints.anchor = GridBagConstraints.WEST;
@@ -194,7 +204,7 @@ public class game_interface {
 
         author = new JLabel("Created by Francyn Macadangdang for IT191");
         author.setForeground(Color.GRAY);
-        author.setFont(author.getFont().deriveFont(12f));
+        author.setFont(customFont.deriveFont(16f));
         author.setHorizontalAlignment(JLabel.CENTER);
         rulesPanel.add(author, BorderLayout.SOUTH);
     }
@@ -202,7 +212,7 @@ public class game_interface {
     void createRule(JLabel rule, String text, int y) {
         rule = new JLabel();
         rule.setForeground(Color.WHITE);
-        rule.setFont(rule.getFont().deriveFont(22f));
+        rule.setFont(customFont.deriveFont(28f));
         rule.setText(text);
         createRulesConstraints.gridx = 0;
         createRulesConstraints.gridy = y;
@@ -223,7 +233,7 @@ public class game_interface {
 
         mainMenuButton = new JButton("Main Menu");
         mainMenuButton.setForeground(bluegreen);
-        mainMenuButton.setFont(mainMenuButton.getFont().deriveFont(16f));
+        mainMenuButton.setFont(customFont.deriveFont(20f));
         customizeButton(mainMenuButton);
         createGameInterfaceConstraints.gridx = 0;
         createGameInterfaceConstraints.gridy = 0;
@@ -239,7 +249,7 @@ public class game_interface {
 
         newGameButton = new JButton("New Game");
         newGameButton.setForeground(bluegreen);
-        newGameButton.setFont(newGameButton.getFont().deriveFont(16f));
+        newGameButton.setFont(customFont.deriveFont(20f));
         customizeButton(newGameButton);
         createGameInterfaceConstraints.gridx = 1;
         createGameInterfaceConstraints.gridy = 0;
@@ -261,7 +271,7 @@ public class game_interface {
 
         timerLabel = new JLabel("30");
         timerLabel.setForeground(bluegreen);
-        timerLabel.setFont(timerLabel.getFont().deriveFont(16f));
+        timerLabel.setFont(customFont.deriveFont(20f));
         createGameInterfaceConstraints.weightx = 0;
         createGameInterfaceConstraints.gridx = 3;
         createGameInterfaceConstraints.gridy = 0;
@@ -271,12 +281,14 @@ public class game_interface {
         
         createGameInterfaceConstraints.anchor = GridBagConstraints.CENTER;
 
+        customThinnerFont = loadCustomFont("Handjet[EGRD,ESHP,wght].ttf");
+
         gameCenterPanel = new JPanel(new GridBagLayout());
         gameCenterPanel.setBackground(background);
         gameCenterPanel.setBorder(BorderFactory.createEmptyBorder(75, 0, 0, 0));
         centerTitle = new JLabel("what number am i?");
         centerTitle.setForeground(Color.WHITE);
-        centerTitle.setFont(centerTitle.getFont().deriveFont(48f));
+        centerTitle.setFont(customThinnerFont.deriveFont(60f));
         centerTitle.setHorizontalAlignment(JLabel.CENTER);
         createGameInterfaceConstraints.gridx = 0;
         createGameInterfaceConstraints.gridy = 0;
@@ -287,7 +299,7 @@ public class game_interface {
         inputField.setHorizontalAlignment(CustomTextField.CENTER);
         inputField.setForeground(Color.WHITE);
         // set the font to 60
-        inputField.setFont(inputField.getFont().deriveFont(60f));
+        inputField.setFont(customFont.deriveFont(72f));
         inputField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -303,7 +315,7 @@ public class game_interface {
         
         attemptsLabel = new JLabel("Attempts: " + attemptsCount.toString());
         attemptsLabel.setForeground(Color.WHITE);
-        attemptsLabel.setFont(centerTitle.getFont().deriveFont(32f));
+        attemptsLabel.setFont(customThinnerFont.deriveFont(40f));
         attemptsLabel.setHorizontalAlignment(JLabel.CENTER);
         createGameInterfaceConstraints.gridx = 0;
         createGameInterfaceConstraints.gridy = 2;
@@ -421,10 +433,6 @@ public class game_interface {
         frame.repaint();
     }
 
-    void createMainMenuBtn(GridBagConstraints c) {
-        
-    }
-
     // ensure only one instance of the game_interface is created
     public static game_interface getInstance() {
         if (firstInstance == null) {
@@ -435,6 +443,17 @@ public class game_interface {
 
     public static void main(String[] args) {
         game_interface.getInstance();
+    }
+
+    Font loadCustomFont(String fontPath) {
+        try {
+            Font font = Font.createFont(Font.TRUETYPE_FONT, new File(fontPath));
+            GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+            return font;
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public class CustomTextField extends JTextField {
