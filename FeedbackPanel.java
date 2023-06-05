@@ -46,6 +46,7 @@ public class FeedbackPanel extends JPanel {
         feedbackTextArea.setForeground(Color.WHITE);
         feedbackTextArea.setFont(feedbackTextArea.getFont().deriveFont(24f));       
         feedbackTextArea.setEditable(false);
+        feedbackTextArea.setFocusable(false);
         feedbackTextArea.setAlignmentX(CENTER_ALIGNMENT);
     
         GridBagConstraints constraints = new GridBagConstraints();
@@ -67,16 +68,22 @@ public class FeedbackPanel extends JPanel {
         lineCount++;
 
         if (inputPanel.getInputNumber() > inputPanel.getRandomNumber()) {
-            feedbackTextArea.append("Your guess is too high.\n");
+            feedbackTextArea.setForeground(red);
+            feedbackTextArea.append("Your guess is higher than the target.\n");
         } else if (inputPanel.getInputNumber() < inputPanel.getRandomNumber()) {
-            feedbackTextArea.append("Your guess is too low.\n");
+            feedbackTextArea.setForeground(blue);
+            feedbackTextArea.append("Your guess is lower than the target.\n");
         } else {
-            feedbackTextArea.append("You guessed the number!\n");
+            feedbackTextArea.setForeground(green);
+            feedbackTextArea.append("Congratulations, your guess is correct!\n");
+            inputPanel.lockInputField();
         }
     }   
 
     public void resetFeedbackPanel() {
         // reset the feedback panel
+        feedbackTextArea.setText("");
+        lineCount = 0;
     }
 
     public void setInputPanel(InputPanel inputPanel) {

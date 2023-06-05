@@ -7,6 +7,7 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,10 +27,10 @@ public class MainFrame {
     FeedbackPanel feedbackPanel;
     // Rules rules;
 
-    private JPanel mainMenuPanel, rulesPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyPanel;
-    private GridBagConstraints mainMenuConstraints, gameNorthConstraints, gameCenterConstraints;
+    private JPanel mainMenuPanel, rulesPanel, ruleItemsPanel, gamePanel, gameNorthPanel, gameCenterPanel, emptyPanel;
+    private GridBagConstraints mainMenuConstraints, createRulesConstraints, gameNorthConstraints, gameCenterConstraints;
     private JButton startButton, rulesButton, mainMenuButton, newGameButton;
-    private JLabel gameTitle;
+    private JLabel gameTitle, rule1, rule2, rule3, rule4, author;
 
     Font customFont;
 
@@ -47,7 +48,7 @@ public class MainFrame {
         customFont = loadCustomFont("Fonts/HandjetFlowerDouble-Medium.ttf");
 
         createMainMenu();
-        showRulesPanel();
+        createRules();
         createGamePanel(); 
 
         frame.add(mainMenuPanel);
@@ -106,8 +107,90 @@ public class MainFrame {
         mainMenuPanel.add(rulesButton, mainMenuConstraints);
     }
 
-    private void showRulesPanel() {
+    private void createRules() {
+        rulesPanel = new JPanel(new BorderLayout());
+        rulesPanel.setBackground(background);
+        rulesPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
+        mainMenuButton = new JButton("Main Menu");
+        mainMenuButton.setForeground(bluegreen);
+        
+        mainMenuButton.setFont(customFont.deriveFont(20f));
+        customizeButton(mainMenuButton);
+        mainMenuButton.setHorizontalAlignment(JButton.LEFT);
+        mainMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(rulesPanel);
+                frame.add(mainMenuPanel);
+                updateGUI();
+            }
+        });
+        rulesPanel.add(mainMenuButton, BorderLayout.NORTH);
+
+        ruleItemsPanel = new JPanel(new GridBagLayout());
+        ruleItemsPanel.setBackground(background);
+        createRulesConstraints = new GridBagConstraints();
+
+        JLabel rulesTitle = new JLabel("Rules");
+        rulesTitle.setForeground(bluegreen);
+        rulesTitle.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, bluegreen));
+        rulesTitle.setFont(customFont.deriveFont(46f));
+        createRulesConstraints.gridx = 0;
+        createRulesConstraints.gridy = 0;
+        createRulesConstraints.anchor = GridBagConstraints.WEST;
+        createRulesConstraints.insets = new Insets(0, 0, 50, 0);
+        ruleItemsPanel.add(rulesTitle, createRulesConstraints);
+
+        createRule(
+            rule1, 
+            "<html><body>" 
+            + "<span style='color: #AA3290'>>&nbsp;&nbsp;</span> You have <u>30 seconds</u> to <span style='color: #AA3290'>guess</span> the randomly generated number"
+            + "</body></html>",
+            1
+        );
+        createRule(
+            rule2, 
+            "<html><body>" 
+            + "<span style='color: #C56054'>>&nbsp;&nbsp;</span> When the input number is <u>higher</u> than the target, the components will turn <span style='color: #C56054'>red</span>"
+            + "</body></html>",
+            2
+        );
+        createRule(
+            rule3, 
+            "<html><body>" 
+            + "<span style='color: #399FC3'>>&nbsp;&nbsp;</span> When the input number is <u>lower</u> than the target, the components will turn <span style='color: #399FC3'>blue</span>"
+            + "</body></html>",
+            3
+        );
+        createRule(
+            rule4, 
+            "<html><body>" 
+            + "<span style='color: #67B94F'>>&nbsp;&nbsp;</span> The components will turn <span style='color: #67B94F'>green</span> if the input is <u>equal</u> to the random number"
+            + "</body></html>",
+            4
+        );
+
+        rulesPanel.add(ruleItemsPanel, BorderLayout.CENTER);
+
+        author = new JLabel("Created by Francyn Macadangdang for IT191");
+        author.setForeground(Color.GRAY);
+        author.setFont(customFont.deriveFont(16f));
+        author.setHorizontalAlignment(JLabel.CENTER);
+        rulesPanel.add(author, BorderLayout.SOUTH);
+    }
+
+    private void createRule(JLabel rule, String text, int y) {
+        rule = new JLabel();
+        rule.setForeground(Color.WHITE);
+        rule.setFont(customFont.deriveFont(28f));
+        rule.setText(text);
+        createRulesConstraints.gridx = 0;
+        createRulesConstraints.gridy = y;
+        createRulesConstraints.gridwidth = 3;
+        createRulesConstraints.anchor = GridBagConstraints.WEST;
+        createRulesConstraints.insets = new Insets(0, 0, 30, 0);
+        ruleItemsPanel.add(rule, createRulesConstraints);
     }
 
     private void createGamePanel() {
@@ -175,7 +258,7 @@ public class MainFrame {
         
         gameTitle = new JLabel("Higher-Lower Game");
         gameTitle.setFont(customFont.deriveFont(48f));
-        gameTitle.setForeground(Color.WHITE);
+        gameTitle.setForeground(Color.decode("#AA3290"));
 
         inputPanel = new InputPanel();
         feedbackPanel = new FeedbackPanel();

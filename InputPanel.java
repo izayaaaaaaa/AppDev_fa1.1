@@ -7,6 +7,7 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -64,6 +65,8 @@ public class InputPanel extends JPanel {
         inputField.setForeground(Color.WHITE);
         inputField.setFont(customFont.deriveFont(48f));
 
+        constraints.insets = new Insets(10, 0, 10, 0);
+
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.anchor = GridBagConstraints.NORTH;
@@ -94,8 +97,15 @@ public class InputPanel extends JPanel {
         }
     }
     
+    public void lockInputField() {
+        inputField.setEditable(false);;
+        inputField.setFocusable(false);
+    }
+
     public void resetInputField() {
-        // reset the input field
+        inputField.setText("");
+        inputField.setEditable(true);
+        inputField.setFocusable(true);
     }
 
     public int getInputNumber() {
